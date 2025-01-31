@@ -41,6 +41,16 @@ class FootballTrackingApp:
             self.tracking_df = pd.read_csv(file_path)
             print("Archivo cargado con éxito")
 
+            # Verificar qué columnas están disponibles
+            print(self.tracking_df.columns)
+
+            # Seleccionar columnas necesarias (con comprobación para la columna 'teamAbbr')
+            columns_needed = ['nflId', 'displayName']
+            if 'teamAbbr' in self.tracking_df.columns:
+                columns_needed.append('teamAbbr')
+
+            player_data = self.tracking_df[columns_needed].drop_duplicates()
+
             # Obtener GameId únicos y cargar en el desplegable
             game_ids = self.tracking_df['gameId'].unique().tolist()
             self.game_id_dropdown['values'] = game_ids
@@ -79,38 +89,31 @@ class FootballTrackingApp:
 
         # Crear diccionario para guardar los gráficos de cada jugador
         players = {}
-        player_paths = {}  # Guardar las rutas de los jugadores
+        for nfl_id in play_data['nflId'].dropna().unique():
+            player_info = play_data[play_data['nflId'] == nfl_id].iloc[0]
+            label = f"{int(nfl_id)} - {player_info['displayName']}"
+            if 'teamAbbr' in player_info.index:
+                label += f" ({player_info['teamAbbr']})"
+            players[nfl_id], = ax.plot([], [], 'o', label=label)
 
         # Agregar el balón
         ball, = ax.plot([], [], 'ko', markersize=8, label="Balón")
-        ball_path = []  # Guardar la ruta del balón
 
         def update(frame):
-            """Actualiza la posición de los jugadores y deja un rastro en cada frame."""
+            """Actualiza la posición de los jugadores en cada frame."""
             frame_data = play_data[play_data['frameId'] == frame]
 
             for nfl_id in players.keys():
                 player_data = frame_data[frame_data['nflId'] == nfl_id]
                 if not player_data.empty:
-                    # Actualizar las posiciones de los jugadores
                     players[nfl_id].set_data(player_data['x'], player_data['y'])
-                    # Agregar el rastro
-                    player_paths[nfl_id].append((player_data['x'].values[0], player_data['y'].values[0]))
-                    ax.plot(*zip(*player_paths[nfl_id]), color=players[nfl_id].get_color(), linestyle='-', alpha=0.5)
 
-            # Actualizar balón y su rastro
+            # Actualizar balón
             ball_data = frame_data[frame_data['nflId'].isna()]
             if not ball_data.empty:
                 ball.set_data(ball_data['x'], ball_data['y'])
-                ball_path.append((ball_data['x'].values[0], ball_data['y'].values[0]))
-                ax.plot(*zip(*ball_path), color='black', linestyle='-', alpha=0.5)
 
             return list(players.values()) + [ball]
-
-        # Inicializar los jugadores
-        for nfl_id in play_data['nflId'].dropna().unique():
-            players[nfl_id], = ax.plot([], [], 'o', label=f"Jugador {int(nfl_id)}")
-            player_paths[nfl_id] = []
 
         ani = animation.FuncAnimation(fig, update, frames=frames, interval=100, blit=True)
 
