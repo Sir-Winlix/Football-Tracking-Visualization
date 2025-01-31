@@ -26,14 +26,13 @@ Abre el proyecto en Jupyter Notebook o ejecuta los scripts directamente:
 
     jupyter notebook
 
-📈 Ejemplos de Uso
+## 📸 **Ejemplo de Funcionamiento**
+Aquí puedes ver cómo funciona la visualización:
 
-    Visualización de Jugadas: Muestra cómo los jugadores se posicionan y mueven durante las jugadas clave.
-    Análisis de Velocidad y Desempeño: Calcula la velocidad media y total de los jugadores durante el partido.
+![Visualización de Jugadas](ruta.png)
 
-🤝 Contribuciones
+Y una animación que muestra el movimiento de los jugadores durante una jugada:
 
-Si deseas contribuir a este proyecto, siéntete libre de realizar un fork y enviar un pull request. Apreciamos cualquier mejora en la visualización, la eficiencia del código o nuevas funcionalidades.
-📄 Licencia
+![Animación](animacion.gif)
 
 Este proyecto está bajo la licencia MIT. Consulta el archivo LICENSE para más detalles.
