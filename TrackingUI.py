@@ -11,9 +11,16 @@ class FootballTrackingApp:
         self.root = root
         self.root.title("Football Tracking Visualization")
 
-        # Botón para cargar archivo
-        self.load_button = tk.Button(root, text="Cargar Datos", command=self.load_file)
+        # Botón para cargar archivos
+        self.load_button = tk.Button(root, text="Cargar Datos", command=self.load_files)
         self.load_button.pack(pady=10)
+
+        # Desplegable de selección de partido
+        self.game_label = tk.Label(root, text="Selecciona un partido:")
+        self.game_label.pack()
+        self.game_dropdown = ttk.Combobox(root, state="disabled")
+        self.game_dropdown.pack(pady=5)
+        self.game_dropdown.bind("<<ComboboxSelected>>", self.update_game_data)
 
         # Desplegable GameId
         self.game_id_label = tk.Label(root, text="Selecciona Game ID:")
@@ -39,45 +46,50 @@ class FootballTrackingApp:
         self.plot_button = tk.Button(root, text="Animar Jugada", command=self.animate_play)
         self.plot_button.pack(pady=20)
 
-        # Variable para almacenar los datos
-        self.tracking_df = None
+        # Botón de pausa
+        self.pause_button = tk.Button(root, text="Pausar", state="disabled", command=self.pause_animation)
+        self.pause_button.pack(pady=5)
 
-    def load_file(self):
-        """Permite al usuario cargar un archivo CSV."""
-        file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
-        if file_path:
+        # Variables para almacenar los datos
+        self.tracking_data = {}
+        self.animation = None  # Asegurarse de que la animación esté inicialmente como None
+        self.paused = False
+
+    def load_files(self):
+        """Permite al usuario cargar múltiples archivos CSV."""
+        file_paths = filedialog.askopenfilenames(filetypes=[("CSV files", "*.csv")])
+        if file_paths:
             try:
-                self.tracking_df = pd.read_csv(file_path)
-                print("Archivo cargado con éxito")
+                # Cargar cada archivo y agregarlo al diccionario de tracking_data
+                for file_path in file_paths:
+                    df = pd.read_csv(file_path)
+                    game_id = df['gameId'].iloc[0]  # Suponemos que todos los registros en un archivo tienen el mismo gameId
+                    self.tracking_data[file_path] = df
+                    print(f"Archivo {file_path} cargado con éxito")
 
-                # Verificar qué columnas están disponibles
-                print(self.tracking_df.columns)
-
-                # Seleccionar columnas necesarias (con comprobación para 'teamAbbr', 'jerseyNumber' y 'position')
-                columns_needed = ['nflId', 'displayName']
-                if 'teamAbbr' in self.tracking_df.columns:
-                    columns_needed.append('teamAbbr')
-                if 'jerseyNumber' in self.tracking_df.columns:
-                    columns_needed.append('jerseyNumber')
-                if 'position' in self.tracking_df.columns:
-                    columns_needed.append('position')
-
-                player_data = self.tracking_df[columns_needed].drop_duplicates()
-
-                # Obtener GameId únicos y cargar en el desplegable
-                game_ids = self.tracking_df['gameId'].unique().tolist()
-                self.game_id_dropdown['values'] = game_ids
-                self.game_id_dropdown.state(["!disabled"])
-                self.play_id_dropdown.state(["disabled"])
+                # Agregar los nombres de los archivos al desplegable de selección de partido
+                self.game_dropdown['values'] = list(self.tracking_data.keys())
+                self.game_dropdown.state(["!disabled"])
 
             except Exception as e:
-                messagebox.showerror("Error", f"Error al cargar el archivo: {str(e)}")
+                messagebox.showerror("Error", f"Error al cargar los archivos: {str(e)}")
+
+    def update_game_data(self, event):
+        """Actualiza los desplegables de Game ID y Play ID según el archivo seleccionado."""
+        selected_file = self.game_dropdown.get()
+        if selected_file in self.tracking_data:
+            self.selected_data = self.tracking_data[selected_file]
+
+            # Obtener GameIds únicos y cargar en el desplegable
+            game_ids = self.selected_data['gameId'].unique().tolist()
+            self.game_id_dropdown['values'] = game_ids
+            self.game_id_dropdown.state(["!disabled"])
 
     def update_play_ids(self, event):
         """Actualiza el desplegable de Play ID cuando se selecciona un Game ID."""
         try:
             selected_game_id = int(self.game_id_dropdown.get())
-            play_ids = self.tracking_df[self.tracking_df['gameId'] == selected_game_id]['playId'].unique().tolist()
+            play_ids = self.selected_data[self.selected_data['gameId'] == selected_game_id]['playId'].unique().tolist()
             self.play_id_dropdown['values'] = play_ids
             self.play_id_dropdown.state(["!disabled"])
         except ValueError:
@@ -85,15 +97,15 @@ class FootballTrackingApp:
 
     def animate_play(self):
         """Genera una animación de la jugada con los datos de tracking."""
-        if self.tracking_df is None:
-            messagebox.showerror("Error", "Por favor, carga un archivo primero")
+        if not hasattr(self, 'selected_data'):
+            messagebox.showerror("Error", "Por favor, selecciona un partido primero")
             return
 
         game_id = int(self.game_id_dropdown.get())
         play_id = int(self.play_id_dropdown.get())
 
         # Filtrar los datos según el gameId y playId
-        play_data = self.tracking_df[(self.tracking_df['gameId'] == game_id) & (self.tracking_df['playId'] == play_id)]
+        play_data = self.selected_data[(self.selected_data['gameId'] == game_id) & (self.selected_data['playId'] == play_id)]
 
         # Obtener los frames únicos (tiempos en la jugada)
         frames = sorted(play_data['frameId'].unique())
@@ -143,7 +155,10 @@ class FootballTrackingApp:
         # Obtener la velocidad de la animación desde el deslizador
         speed = self.speed_slider.get()
 
-        ani = animation.FuncAnimation(fig, update, frames=frames, interval=speed, blit=True)
+        self.animation = animation.FuncAnimation(fig, update, frames=frames, interval=speed, blit=True)
+
+        # Habilitar el botón de pausa
+        self.pause_button.config(state="normal")
 
         plt.legend(loc="upper left", fontsize=8)
         plt.show()
@@ -175,6 +190,20 @@ class FootballTrackingApp:
         # Zonas de los equipos (si es necesario)
         ax.fill_betweenx([0, 53.3], 0, 10, color="lightgreen", alpha=0.3)  # Zona 1
         ax.fill_betweenx([0, 53.3], 110, 120, color="lightgreen", alpha=0.3)  # Zona 2
+
+    def pause_animation(self):
+        """Pausar la animación."""
+        if self.animation:  # Verificar si la animación ha sido creada
+            if self.paused:
+                self.animation.event_source.start()
+                self.pause_button.config(text="Pausar")
+                self.paused = False
+            else:
+                self.animation.event_source.stop()
+                self.pause_button.config(text="Reanudar")
+                self.paused = True
+        else:
+            messagebox.showwarning("Advertencia", "La animación no se ha iniciado aún.")
 
 # Crear la ventana principal
 root = tk.Tk()
