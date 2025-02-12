@@ -1,38 +1,73 @@
-# 🏈 **Football Tracking Visualization** 🏈
+# 🏈 **Football Tracking Visualization** ⚡
 
-Este proyecto está diseñado para visualizar datos de seguimiento de jugadores en partidos de fútbol, utilizando técnicas de visualización de datos avanzadas. A través de este repositorio, podrás explorar cómo los datos de posición y movimientos de los jugadores pueden ser utilizados para entender mejor el juego y las estrategias en tiempo real.
+**Football Tracking Visualization** es una aplicación interactiva construida con **Streamlit** que te permite visualizar y analizar el movimiento de los jugadores y la pelota durante los partidos de la NFL 🏆, usando datos de seguimiento de jugadas de la temporada 📊.
 
-## 🚀 **Características**
-- Visualización interactiva de las posiciones de los jugadores durante las jugadas.
-- Representación de estadísticas clave como la velocidad, distancia recorrida y más.
-- Análisis en tiempo real de las jugadas y comportamientos tácticos.
-- Compatible con los conjuntos de datos de la NFL, incluido el seguimiento de jugadas y jugadores.
+## 🚀 Funcionalidades Principales
 
-## 📊 **Tecnologías Utilizadas**
-- **Python**: Para el procesamiento de datos y la creación de visualizaciones.
-- **Matplotlib / Seaborn / Plotly**: Bibliotecas para visualización de datos.
-- **Pandas**: Para el análisis y manipulación de datos.
-- **Jupyter Notebooks**: Para crear análisis interactivos.
+1. **Selección de Semana y Partido** 📅
+   - Elige entre varias semanas de seguimiento (del 1 al 9) para explorar los partidos y jugadas de cada semana de la temporada 🏈.
+   - ¡Selecciona un partido y comienza a explorar!
 
-## 💻 **Instalación**
-1. Clona el repositorio:
-   ```bash
-   git clone https://github.com/Sir-Winlix/Football-Tracking-Visualization.git
-Instala las dependencias necesarias:
+2. **Visualización de Jugadas** 🎮
+   - Al elegir un partido, podrás seleccionar jugadas específicas para verlas en detalle 🎯.
+   - La **descripción de la jugada** se muestra para que puedas entender qué ocurrió en el campo.
+
+3. **Seguimiento de Jugadores y Pelota** 🎥
+   - Visualiza el **movimiento de los jugadores** en el campo en cada fotograma de la jugada 📍.
+   - La **pelota** también es visible, con un identificador único para distinguirla de los jugadores 🏈.
+
+4. **Animación Interactiva** 🎬
+   - Observa cómo se desarrollan las jugadas fotograma por fotograma, viendo en tiempo real el **movimiento** de los jugadores y la pelota 🏃‍♂️💨.
+   - Utilizamos **Plotly** para crear gráficos interactivos y animados 📊✨.
+
+5. **Interactividad y Personalización** 🔍
+   - ¡Haz zoom! Desplázate por el campo y observa detalles adicionales al pasar el ratón sobre los jugadores o la pelota 👀.
+   - La visualización se ajusta dinámicamente según las jugadas y datos de seguimiento que elijas.
+
+## ⚙️ Tecnologías Utilizadas
+
+- **Streamlit**: Framework de Python para crear aplicaciones web interactivas 🌐.
+- **Pandas**: Librería para manipular y analizar datos en Python 🐼.
+- **Plotly**: Herramienta para crear gráficos interactivos en Python 📈.
+- **CSV**: Archivos de datos que contienen información sobre partidos, jugadas, jugadores y seguimiento de las jugadas 📝.
+
+## 📂 Archivos de Datos
+
+1. **games.csv**: Información sobre los partidos, incluyendo equipos, fechas y puntuaciones 🏆.
+2. **plays.csv**: Detalles de las jugadas, como tipo de jugada, cuarto del partido y más 📝.
+3. **players.csv**: Datos de los jugadores: nombre, posición, universidad, altura, peso y más ⚡.
+4. **player_play.csv**: Información sobre las estadísticas de los jugadores en cada jugada (yardas, intentos, receptores) 🏃‍♂️.
+5. **tracking_week_[week].csv**: Datos de seguimiento de las jugadas (posición, velocidad, aceleración de jugadores y pelota) 📍.
+
+## 🏃‍♂️ Cómo Ejecutar el Proyecto
+
+1. **Clonar el repositorio:**
+
+git clone https://github.com/[tu-usuario]/Football-Tracking-Visualization.git cd Football-Tracking-Visualization
+
+
+2. **Instalar dependencias:**
+
+Asegúrate de tener **Python 3.x** instalado, y luego instala las dependencias con:
 
 pip install -r requirements.txt
 
-Abre el proyecto en Jupyter Notebook o ejecuta los scripts directamente:
 
-    jupyter notebook
+3. **Ejecutar la aplicación:**
 
-## 📸 **Ejemplo de Funcionamiento**
-Aquí puedes ver cómo funciona la visualización:
+Una vez instaladas las dependencias, ejecuta la aplicación con el siguiente comando:
 
-![Visualización de Jugadas](ruta.png)
+streamlit run app.py
 
-Y una animación que muestra el movimiento de los jugadores durante una jugada:
 
-![Animación](animacion.gif)
+4. **Acceder a la aplicación:**
 
-Este proyecto está bajo la licencia MIT. Consulta el archivo LICENSE para más detalles.
+La aplicación estará disponible en tu navegador en `http://localhost:8501` 🌐.
+
+
+---
+
+¡Disfruta visualizando y explorando las jugadas de la NFL! 🏈⚡ Si tienes preguntas o sugerencias, no dudes en abrir un **issue**.
+
+
+
