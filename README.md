@@ -2,6 +2,8 @@
 
 **Football Tracking Visualization** es una aplicación interactiva construida con **Streamlit** que te permite visualizar y analizar el movimiento de los jugadores y la pelota durante los partidos de la NFL 🏆, usando datos de seguimiento de jugadas de la temporada 📊.
 
+![Pantallazo de la aplicación](Screenshot.png)
+
 ## 🚀 Funcionalidades Principales
 
 1. **Selección de Semana y Partido** 📅
