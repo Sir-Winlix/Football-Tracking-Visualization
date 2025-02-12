@@ -45,7 +45,7 @@
 
 1. **Clonar el repositorio:**
 
-git clone https://github.com/[tu-usuario]/Football-Tracking-Visualization.git cd Football-Tracking-Visualization
+git clone https://github.com/Sir-Winlix/Football-Tracking-Visualization.git cd Football-Tracking-Visualization
 
 
 2. **Instalar dependencias:**
